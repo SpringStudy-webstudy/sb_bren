@@ -17,3 +17,14 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+springdoc:
+  default-consume-media-type: application/json
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    groups-order: DESC
+    operations-sorter: alpha
+    disable-swagger-default-url: true
+    display-request-duration: true
