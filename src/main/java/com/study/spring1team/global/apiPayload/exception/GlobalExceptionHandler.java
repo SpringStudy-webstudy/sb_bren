@@ -3,6 +3,7 @@ package com.study.spring1team.global.apiPayload.exception;
 import com.study.spring1team.global.apiPayload.ApiResponse;
 import com.study.spring1team.global.apiPayload.code.BaseErrorCode;
 import com.study.spring1team.global.apiPayload.code.GeneralErrorCode;
+import jakarta.servlet.ServletException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -20,7 +21,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiResponse<Void>> handleAllException(Exception e) {
+    public ResponseEntity<ApiResponse<Void>> handleAllException(Exception e) throws ServletException {
+        if (e instanceof jakarta.servlet.ServletException) {
+            System.out.println("발생한 에러 클래스: " + e.getClass().getName());
+            throw (jakarta.servlet.ServletException) e;
+        }
         return ResponseEntity
                 .status(GeneralErrorCode.BAD_REQUEST.getStatus())
                 .body(ApiResponse.onFailure(GeneralErrorCode.BAD_REQUEST, null));
