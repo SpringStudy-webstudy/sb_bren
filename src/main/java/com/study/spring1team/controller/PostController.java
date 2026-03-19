@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/posts")
 public class PostController {
 
-    @PostMapping("/")
+    @PostMapping()
     public ApiResponse<String> createPost(@Valid @RequestBody PostRequestDTO request) {
         return ApiResponse.onSuccess(GeneralSuccessCode.OK, "게시글이 성공적으로 생성되었습니다.");
     }
