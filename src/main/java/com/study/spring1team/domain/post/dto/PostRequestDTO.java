@@ -1,4 +1,4 @@
-package com.study.spring1team.dto;
+package com.study.spring1team.domain.post.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

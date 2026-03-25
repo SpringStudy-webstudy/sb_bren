@@ -1,4 +1,4 @@
-package com.study.spring1team.controller;
+package com.study.spring1team.domain.ping.controller;
 
 import com.study.spring1team.global.apiPayload.ApiResponse;
 import com.study.spring1team.global.apiPayload.code.GeneralSuccessCode;
