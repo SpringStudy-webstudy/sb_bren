@@ -43,6 +43,10 @@ public class CommentService {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 댓글이 없습니다."));
 
+        if (!comment.getAuthor().getId().equals(DEFAULT_USER_ID)) {
+            throw new IllegalArgumentException("작성자만 삭제할 수 있습니다.");
+        }
+
         commentRepository.delete(comment);
     }
 }

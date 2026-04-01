@@ -1,5 +1,6 @@
 package com.study.spring1team.domain.post.controller;
 
+import com.study.spring1team.domain.post.dto.PostResponseDTO;
 import com.study.spring1team.domain.post.entity.Post;
 import com.study.spring1team.domain.post.service.PostService;
 import com.study.spring1team.global.apiPayload.ApiResponse;
@@ -29,7 +30,7 @@ public class PostController {
     }
 
     @GetMapping("/{postId}")
-    public ApiResponse<Post> getPost(@PathVariable Long postId) {
+    public ApiResponse<PostResponseDTO> getPost(@PathVariable Long postId) {
         return ApiResponse.onSuccess(GeneralSuccessCode.OK, postService.getPost(postId));
     }
 
