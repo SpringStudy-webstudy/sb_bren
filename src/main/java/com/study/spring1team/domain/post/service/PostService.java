@@ -25,7 +25,29 @@ public class PostService {
         return postRepository.save(post).getId();
     }
 
+    @Transactional(readOnly = true)
     public List<Post> getPostList() {
         return postRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public Post getPost(Long postId) {
+        return postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다."));
+    }
+
+    public void updatePost(Long postId, PostRequestDTO request) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다."));
+
+        post.setTitle(request.getTitle());
+        post.setContent(request.getContent());
+    }
+
+    public void deletePost(Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다."));
+
+        postRepository.delete(post);
     }
 }
