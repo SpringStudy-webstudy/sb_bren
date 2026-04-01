@@ -24,8 +24,8 @@ public class PostController {
     }
 
     @GetMapping
-    public List<Post> getPosts() {
-        return postService.getPostList();
+    public ApiResponse<List<Post>> getPosts() {
+        return ApiResponse.onSuccess(GeneralSuccessCode.OK, postService.getPostList());
     }
 
     @GetMapping("/{postId}")
