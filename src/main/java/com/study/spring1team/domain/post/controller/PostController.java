@@ -27,4 +27,24 @@ public class PostController {
     public List<Post> getPosts() {
         return postService.getPostList();
     }
+
+    @GetMapping("/{postId}")
+    public ApiResponse<Post> getPost(@PathVariable Long postId) {
+        return ApiResponse.onSuccess(GeneralSuccessCode.OK, postService.getPost(postId));
+    }
+
+    @PutMapping("/{postId}")
+    public ApiResponse<String> updatePost(
+            @PathVariable Long postId,
+            @Valid @RequestBody PostRequestDTO request
+    ) {
+        postService.updatePost(postId, request);
+        return ApiResponse.onSuccess(GeneralSuccessCode.OK, "게시글이 성공적으로 수정되었습니다.");
+    }
+
+    @DeleteMapping("/{postId}")
+    public ApiResponse<String> deletePost(@PathVariable Long postId) {
+        postService.deletePost(postId);
+        return ApiResponse.onSuccess(GeneralSuccessCode.OK, "게시글이 성공적으로 삭제되었습니다.");
+    }
 }
