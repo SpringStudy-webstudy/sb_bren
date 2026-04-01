@@ -1,5 +1,6 @@
 package com.study.spring1team.domain.user.entity;
 
+import com.study.spring1team.domain.comment.entity.Comment;
 import com.study.spring1team.domain.post.entity.Post;
 import com.study.spring1team.global.entity.BaseEntity;
 import jakarta.persistence.*;
@@ -29,4 +30,7 @@ public class User extends BaseEntity {
 
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
     private List<Post> postList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "author")
+    private List<Comment> commentList = new ArrayList<>();
 }

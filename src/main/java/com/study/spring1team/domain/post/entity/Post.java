@@ -1,11 +1,13 @@
 package com.study.spring1team.domain.post.entity;
 
+import com.study.spring1team.domain.comment.entity.Comment;
 import com.study.spring1team.domain.user.entity.User;
 import com.study.spring1team.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -33,4 +35,7 @@ public class Post extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category; // 카테고리 매핑
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> commentList = new ArrayList<>();
 }
