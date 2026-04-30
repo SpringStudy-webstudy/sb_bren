@@ -6,6 +6,8 @@ import com.study.spring1team.domain.post.entity.Post;
 import com.study.spring1team.domain.post.repository.PostRepository;
 import com.study.spring1team.domain.user.entity.User;
 import com.study.spring1team.domain.user.repository.UserRepository;
+import com.study.spring1team.global.apiPayload.code.GeneralErrorCode;
+import com.study.spring1team.global.apiPayload.exception.GeneralException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,11 +22,9 @@ public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
 
-    private static final Long DEFAULT_USER_ID = 1L;
-
-    public Long createPost(PostRequestDTO request) {
-        User user = userRepository.findById(DEFAULT_USER_ID)
-                .orElseThrow(() -> new IllegalArgumentException("기본 사용자가 없습니다."));
+    public PostResponseDTO createPost(Long userId, PostRequestDTO request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GeneralException(GeneralErrorCode.NOT_FOUND));
 
         Post post = Post.builder()
                 .title(request.getTitle())
@@ -32,7 +32,9 @@ public class PostService {
                 .author(user)
                 .build();
 
-        return postRepository.save(post).getId();
+        Post savedPost = postRepository.save(post);
+
+        return new PostResponseDTO(savedPost);
     }
 
     @Transactional(readOnly = true)
@@ -43,28 +45,28 @@ public class PostService {
     @Transactional(readOnly = true)
     public PostResponseDTO getPost(Long postId) {
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다."));
+                .orElseThrow(() -> new GeneralException(GeneralErrorCode.NOT_FOUND));
         return new PostResponseDTO(post);
     }
 
-    public void updatePost(Long postId, PostRequestDTO request) {
+    public void updatePost(Long userId, Long postId, PostRequestDTO request) {
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다."));
+                .orElseThrow(() -> new GeneralException(GeneralErrorCode.NOT_FOUND));
 
-        if (!post.getAuthor().getId().equals(DEFAULT_USER_ID)) {
-            throw new IllegalArgumentException("작성자만 수정할 수 있습니다.");
+        if (!post.getAuthor().getId().equals(userId)) {
+            throw new GeneralException(GeneralErrorCode.FORBIDDEN);
         }
 
         post.setTitle(request.getTitle());
         post.setContent(request.getContent());
     }
 
-    public void deletePost(Long postId) {
+    public void deletePost(Long userId, Long postId) {
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다."));
+                .orElseThrow(() -> new GeneralException(GeneralErrorCode.NOT_FOUND));
 
-        if (!post.getAuthor().getId().equals(DEFAULT_USER_ID)) {
-            throw new IllegalArgumentException("작성자만 수정할 수 있습니다.");
+        if (!post.getAuthor().getId().equals(userId)) {
+            throw new GeneralException(GeneralErrorCode.FORBIDDEN);
         }
 
         postRepository.delete(post);

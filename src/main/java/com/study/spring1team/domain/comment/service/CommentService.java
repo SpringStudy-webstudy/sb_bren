@@ -7,6 +7,8 @@ import com.study.spring1team.domain.post.entity.Post;
 import com.study.spring1team.domain.post.repository.PostRepository;
 import com.study.spring1team.domain.user.entity.User;
 import com.study.spring1team.domain.user.repository.UserRepository;
+import com.study.spring1team.global.apiPayload.code.GeneralErrorCode;
+import com.study.spring1team.global.apiPayload.exception.GeneralException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,10 +27,10 @@ public class CommentService {
 
     public Long createComment(Long postId, CommentRequestDTO request) {
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다."));
+                .orElseThrow(() ->  new GeneralException(GeneralErrorCode.NOT_FOUND));
 
         User user = userRepository.findById(DEFAULT_USER_ID)
-                .orElseThrow(() -> new IllegalArgumentException("해당 사용자가 없습니다."));
+                .orElseThrow(() ->  new GeneralException(GeneralErrorCode.NOT_FOUND));
 
         Comment comment = Comment.builder()
                 .content(request.getContent())
@@ -41,10 +43,10 @@ public class CommentService {
 
     public void deleteComment(Long commentId) {
         Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 댓글이 없습니다."));
+                .orElseThrow(() -> new GeneralException(GeneralErrorCode.NOT_FOUND));
 
         if (!comment.getAuthor().getId().equals(DEFAULT_USER_ID)) {
-            throw new IllegalArgumentException("작성자만 삭제할 수 있습니다.");
+            throw new GeneralException(GeneralErrorCode.FORBIDDEN);
         }
 
         commentRepository.delete(comment);

@@ -28,3 +28,7 @@ springdoc:
     operations-sorter: alpha
     disable-swagger-default-url: true
     display-request-duration: true
+
+jwt:
+  secret: ${JWT_SECRET:my-super-secret-key-my-super-secret-key-123456}
+  access-token-expiration-ms: 3600000

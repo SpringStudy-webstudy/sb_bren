@@ -9,6 +9,7 @@ import com.study.spring1team.global.apiPayload.code.GeneralSuccessCode;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import java.util.List;
 
@@ -18,10 +19,13 @@ import java.util.List;
 public class PostController {
     private final PostService postService;
 
-    @PostMapping()
-    public ApiResponse<String> createPost(@Valid @RequestBody PostRequestDTO request) {
-        postService.createPost(request);
-        return ApiResponse.onSuccess(GeneralSuccessCode.OK, "게시글이 성공적으로 생성되었습니다.");
+    @PostMapping
+    public ApiResponse<PostResponseDTO> createPost(
+            @AuthenticationPrincipal Long userId,
+            @Valid @RequestBody PostRequestDTO request
+    ) {
+        PostResponseDTO response = postService.createPost(userId, request);
+        return ApiResponse.onSuccess(GeneralSuccessCode.OK, response);
     }
 
     @GetMapping
@@ -36,16 +40,18 @@ public class PostController {
 
     @PutMapping("/{postId}")
     public ApiResponse<String> updatePost(
+            @AuthenticationPrincipal Long userId,
             @PathVariable Long postId,
             @Valid @RequestBody PostRequestDTO request
     ) {
-        postService.updatePost(postId, request);
+        postService.updatePost(userId, postId, request);
         return ApiResponse.onSuccess(GeneralSuccessCode.OK, "게시글이 성공적으로 수정되었습니다.");
     }
 
     @DeleteMapping("/{postId}")
-    public ApiResponse<String> deletePost(@PathVariable Long postId) {
-        postService.deletePost(postId);
+    public ApiResponse<String> deletePost(
+            @AuthenticationPrincipal Long userId, @PathVariable Long postId) {
+        postService.deletePost(userId,postId);
         return ApiResponse.onSuccess(GeneralSuccessCode.OK, "게시글이 성공적으로 삭제되었습니다.");
     }
 }
