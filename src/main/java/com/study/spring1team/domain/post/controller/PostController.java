@@ -10,7 +10,12 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import com.study.spring1team.domain.post.dto.PostListResponseDTO;
+import com.study.spring1team.domain.post.dto.PostSearchCondition;
+import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -29,8 +34,25 @@ public class PostController {
     }
 
     @GetMapping
-    public ApiResponse<List<Post>> getPosts() {
-        return ApiResponse.onSuccess(GeneralSuccessCode.OK, postService.getPostList());
+    public ApiResponse<Page<PostListResponseDTO>> getPosts(
+            @RequestParam(required = false) String keyword,
+
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate startDate,
+
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate endDate,
+
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        PostSearchCondition condition = new PostSearchCondition(keyword, startDate, endDate);
+
+        Page<PostListResponseDTO> response = postService.getPostList(condition, page, size);
+
+        return ApiResponse.onSuccess(GeneralSuccessCode.OK, response);
     }
 
     @GetMapping("/{postId}")
