@@ -23,13 +23,13 @@ public class CommentService {
     private final UserRepository userRepository;
 
     // 유저 고정값 설정
-    private static final Long DEFAULT_USER_ID = 1L;
+//    private static final Long DEFAULT_USER_ID = 1L;
 
-    public Long createComment(Long postId, CommentRequestDTO request) {
+    public Long createComment(Long userId, Long postId, CommentRequestDTO request) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() ->  new GeneralException(GeneralErrorCode.NOT_FOUND));
 
-        User user = userRepository.findById(DEFAULT_USER_ID)
+        User user = userRepository.findById(userId)
                 .orElseThrow(() ->  new GeneralException(GeneralErrorCode.NOT_FOUND));
 
         Comment comment = Comment.builder()
@@ -41,11 +41,11 @@ public class CommentService {
         return commentRepository.save(comment).getId();
     }
 
-    public void deleteComment(Long commentId) {
+    public void deleteComment(Long userId, Long commentId) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new GeneralException(GeneralErrorCode.NOT_FOUND));
 
-        if (!comment.getAuthor().getId().equals(DEFAULT_USER_ID)) {
+        if (!comment.getAuthor().getId().equals(userId)) {
             throw new GeneralException(GeneralErrorCode.FORBIDDEN);
         }
 
