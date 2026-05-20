@@ -35,3 +35,10 @@ out/
 
 ### VS Code ###
 .vscode/
+
+# 데이터베이스 데이터 폴더 제외
+/mysql_data/
+
+# OS 관련 임시 파일
+.DS_Store
+Thumbs.db
