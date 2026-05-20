@@ -19,7 +19,7 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false, length = 255)
     private String password;
 
     @Column(nullable = false, length = 20)
@@ -33,4 +33,13 @@ public class User extends BaseEntity {
 
     @OneToMany(mappedBy = "author")
     private List<Comment> commentList = new ArrayList<>();
+
+    // 회원가입 시 쓸 생성 메서드
+    public static User create(String email, String encodedPassword, String name) {
+        User user = new User();
+        user.email = email;
+        user.password = encodedPassword;
+        user.name = name;
+        return user;
+    }
 }
