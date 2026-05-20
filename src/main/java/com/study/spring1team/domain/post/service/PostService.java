@@ -11,7 +11,14 @@ import com.study.spring1team.global.apiPayload.exception.GeneralException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.study.spring1team.domain.post.dto.PostListResponseDTO;
+import com.study.spring1team.domain.post.dto.PostSearchCondition;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -40,6 +47,37 @@ public class PostService {
     @Transactional(readOnly = true)
     public List<Post> getPostList() {
         return postRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public Page<PostListResponseDTO> getPostList(PostSearchCondition condition, int page, int size) {
+        String keyword = condition.keyword();
+
+        if (keyword != null && keyword.isBlank()) {
+            keyword = null;
+        }
+
+        LocalDateTime startDateTime = condition.startDate() != null
+                ? condition.startDate().atStartOfDay()
+                : null;
+
+        LocalDateTime endDateTime = condition.endDate() != null
+                ? condition.endDate().plusDays(1).atStartOfDay()
+                : null;
+
+        Pageable pageable = PageRequest.of(
+                page,
+                size,
+                Sort.by(Sort.Direction.DESC, "createdAt")
+        );
+
+        return postRepository.searchPosts(
+                        keyword,
+                        startDateTime,
+                        endDateTime,
+                        pageable
+                )
+                .map(PostListResponseDTO::from);
     }
 
     @Transactional(readOnly = true)
