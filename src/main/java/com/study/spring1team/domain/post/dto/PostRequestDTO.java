@@ -15,4 +15,7 @@ public class PostRequestDTO {
     private String content;
 
     private Long categoryId;
+
+    @NotBlank
+    private String commentContent;
 }

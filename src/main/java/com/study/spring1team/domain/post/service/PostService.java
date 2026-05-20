@@ -6,8 +6,11 @@ import com.study.spring1team.domain.post.entity.Post;
 import com.study.spring1team.domain.post.repository.PostRepository;
 import com.study.spring1team.domain.user.entity.User;
 import com.study.spring1team.domain.user.repository.UserRepository;
+import com.study.spring1team.domain.comment.entity.Comment;
+import com.study.spring1team.domain.comment.repository.CommentRepository;
 import com.study.spring1team.global.apiPayload.code.GeneralErrorCode;
 import com.study.spring1team.global.apiPayload.exception.GeneralException;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +31,7 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final CommentRepository commentRepository;
 
     public PostResponseDTO createPost(Long userId, PostRequestDTO request) {
         User user = userRepository.findById(userId)
@@ -41,6 +45,17 @@ public class PostService {
 
         Post savedPost = postRepository.save(post);
 
+        Comment comment = Comment.builder()
+                .content(request.getCommentContent())
+                .author(user)
+                .post(savedPost)
+                .build();
+
+        commentRepository.save(comment);
+
+//        System.out.println("createPost 진입");
+//        System.out.println("댓글 저장 후 예외 발생 직전");
+//        throw new RuntimeException("rollback test");
         return new PostResponseDTO(savedPost);
     }
 

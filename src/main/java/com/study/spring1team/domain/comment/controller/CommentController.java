@@ -6,6 +6,7 @@ import com.study.spring1team.global.apiPayload.ApiResponse;
 import com.study.spring1team.global.apiPayload.code.GeneralSuccessCode;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,16 +17,17 @@ public class CommentController {
 
     @PostMapping("/posts/{postId}/comments")
     public ApiResponse<String> createComment(
+            @AuthenticationPrincipal Long userId,
             @PathVariable Long postId,
             @Valid @RequestBody CommentRequestDTO request
     ) {
-        commentService.createComment(postId, request);
+        commentService.createComment(userId, postId, request);
         return ApiResponse.onSuccess(GeneralSuccessCode.OK, "댓글이 성공적으로 작성되었습니다.");
     }
 
     @DeleteMapping("/comments/{commentId}")
-    public ApiResponse<String> deleteComment(@PathVariable Long commentId) {
-        commentService.deleteComment(commentId);
+    public ApiResponse<String> deleteComment(@AuthenticationPrincipal Long userId, @PathVariable Long commentId) {
+        commentService.deleteComment(userId, commentId);
         return ApiResponse.onSuccess(GeneralSuccessCode.OK, "댓글이 성공적으로 삭제되었습니다.");
     }
 }
